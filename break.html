@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take a break</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+			background-color: lightblue;
+			opacity: 0.9;
+        }
+        .member {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 3px solid #fff;
+            border-radius: 5px;
+        }
+        .on-break {
+            background-color: #ffcc00;
+        }
+        #pauseButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <p><h2>Take a break! (15 minutes max')</h2></p>
+    <div id="members">
+        <div class="member" id="member1">Thibault</div>
+        <div class="member" id="member2">Damien</div>
+        <div class="member" id="member3">Martial</div>
+		<div class="member" id="member4">Lucas</div><br><br>
+        <div class="member" id="member5">Julien</div>
+        <div class="member" id="member6">Luther</div>
+		<div class="member" id="member7">Léa</div>
+        <div class="member" id="member8">Alexandre</div><br><br>
+        <div class="member" id="member9">Naime</div>
+		<div class="member" id="member10">Clément</div>
+        <div class="member" id="member11">Théo</div>
+        <div class="member" id="member12">Stephen</div><br><br>
+		<div class="member" id="member14">Dylan</div>
+		<div class="member" id="member15">Aymeric</div>
+		<div class="member" id="member16">Yannick</div>
+		<div class="member" id="member17">Stéphanie</div>
+
+    </div>
+  
+
+    <script>
+        const members = document.querySelectorAll('.member');
+        let breaksTaken = 0;
+
+        function toggleBreakStatus(member) {
+            if (!member.classList.contains('on-break')) {
+                if (breaksTaken < 2) {
+                    member.classList.add('on-break');
+                    member.textContent += " (en pause)";
+                    breaksTaken++;
+                } else {
+                    alert("Désolé, attends un peu! :)");
+                }
+            } else {
+                member.classList.remove('on-break');
+                member.textContent = member.textContent.replace(" (en pause)", "");
+                breaksTaken--;
+            }
+        }
+
+        members.forEach(member => {
+            member.addEventListener("click", function() {
+                toggleBreakStatus(this);
+            });
+        });
+
+        document.getElementById("pauseButton").addEventListener("click", function() {
+            if (breaksTaken < 3) {
+                let onBreakCount = 0;
+
+
+                members.forEach(member => {
+                    if (member.classList.contains('on-break')) {
+                        onBreakCount++;
+                    }
+                });
+
+                if (onBreakCount < 3) {
+
+                    for (let i = 0; i < members.length; i++) {
+                        if (!members[i].classList.contains('on-break')) {
+                            toggleBreakStatus(members[i]);
+                            break;
+                        }
+                    }
+                } else {
+                    alert("Désolé, attends un peu! :)");
+                }
+            } else {
+                alert("Désolé, attends un peu! :)");
+            }
+        });
+    </script>
+</body>
+</html>
