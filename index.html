@@ -3,30 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des pauses</title>
+    <title>Take a break</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+			background-color: lightblue;
+			opacity: 0.9;
         }
         .member {
             display: inline-block;
             margin: 10px;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 3px solid #fff;
             border-radius: 5px;
-            position: relative;
         }
         .on-break {
             background-color: #ffcc00;
-        }
-        .timer {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 14px;
-            color: #555;
         }
         #pauseButton {
             padding: 10px 20px;
@@ -36,116 +29,84 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Gestion des pauses</h1>
+    <p><h2>Take a break! (15 minutes max')</h2></p>
     <div id="members">
-        <!-- Ajoutez ici les membres de l'équipe -->
-        <div class="member" id="member1">Membre 1<div class="timer" id="timer1"></div></div>
-        <div class="member" id="member2">Membre 2<div class="timer" id="timer2"></div></div>
-        <div class="member" id="member3">Membre 3<div class="timer" id="timer3"></div></div>
-        <!-- Répétez le format pour chaque membre -->
+        <div class="member" id="member1">Thibault</div>
+        <div class="member" id="member2">Damien</div>
+        <div class="member" id="member3">Martial</div>
+		<div class="member" id="member4">Lucas</div><br><br>
+        <div class="member" id="member5">Julien</div>
+        <div class="member" id="member6">Luther</div>
+		<div class="member" id="member7">Léa</div>
+        <div class="member" id="member8">Alexandre</div><br><br>
+        <div class="member" id="member9">Naime</div>
+		<div class="member" id="member10">Clément</div>
+        <div class="member" id="member11">Théo</div>
+        <div class="member" id="member12">Stephen</div><br><br>
+		<div class="member" id="member14">Dylan</div>
+		<div class="member" id="member15">Aymeric</div>
+		<div class="member" id="member16">Yannick</div>
+		<div class="member" id="member17">Stéphanie</div>
+
     </div>
-    <button id="pauseButton">Partir en pause (15 minutes)</button>
+  
 
     <script>
         const members = document.querySelectorAll('.member');
-        const timers = [];
         let breaksTaken = 0;
 
-        // Initialisation des membres
-        const memberData = Array.from(members).map((member, index) => {
-            const timerId = "timer" + (index + 1);
-            timers.push(null);
-            return {
-                element: member,
-                timerId: timerId,
-                onBreak: false
-            };
-        });
-
-        // Fonction pour marquer un membre comme en pause ou de retour de pause
-        function toggleBreakStatus(memberIndex) {
-            const member = memberData[memberIndex];
-            if (!member.onBreak) {
-                if (breaksTaken < 3) {
-                    member.element.classList.add('on-break');
-                    member.element.textContent += " (en pause)";
+        function toggleBreakStatus(member) {
+            if (!member.classList.contains('on-break')) {
+                if (breaksTaken < 2) {
+                    member.classList.add('on-break');
+                    member.textContent += " (en pause)";
                     breaksTaken++;
-                    startTimer(memberIndex);
-                    member.onBreak = true;
                 } else {
-                    alert("Désolé, le nombre maximal de pauses simultanées a été atteint.");
+                    alert("Désolé, attends un peu! :)");
                 }
             } else {
-                member.element.classList.remove('on-break');
-                member.element.textContent = member.element.textContent.replace(" (en pause)", "");
+                member.classList.remove('on-break');
+                member.textContent = member.textContent.replace(" (en pause)", "");
                 breaksTaken--;
-                clearInterval(timers[memberIndex]);
-                document.getElementById(member.timerId).textContent = "";
-                member.onBreak = false;
             }
         }
 
-        // Ajoute un gestionnaire d'événements à chaque membre pour signaler le départ ou le retour de pause
-        memberData.forEach((member, index) => {
-            member.element.addEventListener("click", function() {
-                toggleBreakStatus(index);
+        members.forEach(member => {
+            member.addEventListener("click", function() {
+                toggleBreakStatus(this);
             });
         });
 
-        // Ajoute un gestionnaire d'événements au bouton pour signaler le départ en pause
         document.getElementById("pauseButton").addEventListener("click", function() {
             if (breaksTaken < 3) {
                 let onBreakCount = 0;
 
-                // Vérifie le nombre de membres déjà en pause
-                memberData.forEach(member => {
-                    if (member.onBreak) {
+
+                members.forEach(member => {
+                    if (member.classList.contains('on-break')) {
                         onBreakCount++;
                     }
                 });
 
                 if (onBreakCount < 3) {
-                    // Marque uniquement le premier membre disponible comme en pause
-                    for (let i = 0; i < memberData.length; i++) {
-                        if (!memberData[i].onBreak) {
-                            toggleBreakStatus(i);
-                            break; // Sort de la boucle une fois qu'un membre a été trouvé
+
+                    for (let i = 0; i < members.length; i++) {
+                        if (!members[i].classList.contains('on-break')) {
+                            toggleBreakStatus(members[i]);
+                            break;
                         }
                     }
                 } else {
-                    alert("Désolé, le nombre maximal de pauses simultanées a été atteint.");
+                    alert("Désolé, attends un peu! :)");
                 }
             } else {
-                alert("Désolé, le nombre maximal de pauses a été atteint.");
+                alert("Désolé, attends un peu! :)");
             }
         });
-
-        // Fonction pour démarrer le timer
-        function startTimer(memberIndex) {
-            let minutes = 15;
-            let seconds = 0;
-            const timerId = memberData[memberIndex].timerId;
-            timers[memberIndex] = setInterval(function() {
-                if (seconds === 0) {
-                    minutes--;
-                    seconds = 59;
-                } else {
-                    seconds--;
-                }
-
-                document.getElementById(timerId).textContent = `Temps restant : ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                if (minutes === 0 && seconds === 0) {
-                    clearInterval(timers[memberIndex]);
-                    document.getElementById(timerId).textContent = "Temps écoulé";
-                }
-            }, 1000);
-        }
     </script>
 </body>
 </html>
