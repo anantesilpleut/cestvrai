@@ -1,112 +1,75 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Take a break</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-			background-color: lightblue;
-			opacity: 0.9;
-        }
-        .member {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px;
-            border: 3px solid #fff;
-            border-radius: 5px;
-        }
-        .on-break {
-            background-color: #ffcc00;
-        }
-        #pauseButton {
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer en temps réel</title>
+  <style>
+    .timer-container {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <p><h2>Take a break! (15 minutes max')</h2></p>
-    <div id="members">
-        <div class="member" id="member1">Thibault</div>
-        <div class="member" id="member2">Damien</div>
-        <div class="member" id="member3">Martial</div>
-		<div class="member" id="member4">Lucas</div><br><br>
-        <div class="member" id="member5">Julien</div>
-        <div class="member" id="member6">Luther</div>
-		<div class="member" id="member7">Léa</div>
-        <div class="member" id="member8">Alexandre</div><br><br>
-        <div class="member" id="member9">Naime</div>
-		<div class="member" id="member10">Clément</div>
-        <div class="member" id="member11">Théo</div>
-        <div class="member" id="member12">Stephen</div><br><br>
-		<div class="member" id="member14">Dylan</div>
-		<div class="member" id="member15">Aymeric</div>
-		<div class="member" id="member16">Yannick</div>
-		<div class="member" id="member17">Stéphanie</div>
+  <h1>Timer en temps réel</h1>
 
-    </div>
-  
+  <!-- Boutons des agents -->
+  <div id="buttons">
+    <button onclick="startTimer('Agent 1')">Agent 1</button>
+    <button onclick="startTimer('Agent 2')">Agent 2</button>
+    <!-- Ajoute d'autres boutons pour d'autres agents si nécessaire -->
+  </div>
 
-    <script>
-        const members = document.querySelectorAll('.member');
-        let breaksTaken = 0;
+  <!-- Champ avec le timer -->
+  <div class="timer-container" id="timerContainer">
+    <div id="timer"></div>
+  </div>
 
-        function toggleBreakStatus(member) {
-            if (!member.classList.contains('on-break')) {
-                if (breaksTaken < 2) {
-                    member.classList.add('on-break');
-                    member.textContent += " (en pause)";
-                    breaksTaken++;
-                } else {
-                    alert("Désolé, attends un peu! :)");
-                }
-            } else {
-                member.classList.remove('on-break');
-                member.textContent = member.textContent.replace(" (en pause)", "");
-                breaksTaken--;
-            }
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js"></script>
+  <script>
+    // Configuration de Firebase
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DATABASE_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Référence à la base de données Firebase
+    const database = firebase.database();
+
+    // Référence au noeud du timer
+    const timerRef = database.ref('timer');
+
+    // Fonction pour démarrer le timer pour un agent spécifique
+    function startTimer(agentName) {
+      // Afficher le champ avec le timer
+      document.getElementById('timerContainer').style.display = 'block';
+
+      // Mettre à jour le timer toutes les secondes
+      const interval = setInterval(() => {
+        const timerData = timerRef.once('value').then(snapshot => snapshot.val());
+        const currentTime = new Date().getTime();
+        const fifteenMinutesLater = currentTime + (15 * 60 * 1000);
+        const remainingTime = fifteenMinutesLater - currentTime;
+
+        if (remainingTime > 0) {
+          const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+          document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        } else {
+          clearInterval(interval);
+          document.getElementById('timer').innerText = '15:00'; // Réinitialiser le timer à 15:00
+          // Cacher le champ avec le timer
+          document.getElementById('timerContainer').style.display = 'none';
         }
-
-        members.forEach(member => {
-            member.addEventListener("click", function() {
-                toggleBreakStatus(this);
-            });
-        });
-
-        document.getElementById("pauseButton").addEventListener("click", function() {
-            if (breaksTaken < 3) {
-                let onBreakCount = 0;
-
-
-                members.forEach(member => {
-                    if (member.classList.contains('on-break')) {
-                        onBreakCount++;
-                    }
-                });
-
-                if (onBreakCount < 3) {
-
-                    for (let i = 0; i < members.length; i++) {
-                        if (!members[i].classList.contains('on-break')) {
-                            toggleBreakStatus(members[i]);
-                            break;
-                        }
-                    }
-                } else {
-                    alert("Désolé, attends un peu! :)");
-                }
-            } else {
-                alert("Désolé, attends un peu! :)");
-            }
-        });
-    </script>
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
