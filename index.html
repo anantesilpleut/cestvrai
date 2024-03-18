@@ -3,11 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Inclusion des scripts Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"></script>
-
   <title>Timer en temps réel</title>
   <style>
     .timer-container {
@@ -16,13 +11,14 @@
   </style>
 </head>
 <body>
-  <h1>On y croit!</h1>
+  <h1>Breakolage</h1>
 
   <!-- Boutons des agents -->
   <div id="buttons">
     <button onclick="startTimer('Agent 1')">Agent 1</button>
     <button onclick="startTimer('Agent 2')">Agent 2</button>
     <!-- Ajoute d'autres boutons pour d'autres agents si nécessaire -->
+    c'est cool
   </div>
 
   <!-- Champ avec le timer -->
@@ -35,8 +31,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"></script>
 
-  <!-- Configuration et initialisation de Firebase -->
   <script>
+    // Configuration et initialisation de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCQSW4Vps6R7a3OJYJj9YLBKSeNsq5OOxM",
       authDomain: "anantesilpleut.firebaseapp.com",
@@ -48,27 +44,33 @@
       measurementId: "G-X4KXT9KTDS"
     };
     firebase.initializeApp(firebaseConfig);
-  </script>
 
-  <!-- Définition de la fonction startTimer -->
-  <script>
+    // Fonction pour démarrer le timer pour un agent spécifique
     function startTimer(agentName) {
-      const database = firebase.database();
-      const timerRef = database.ref('timer/start_time');
+      // Afficher le champ avec le timer
       document.getElementById('timerContainer').style.display = 'block';
+
+      // Référence au noeud du timer
+      const timerRef = firebase.database().ref('timer/start_time');
+
+      // Récupérer le temps de début de pause depuis la base de données Firebase
       timerRef.once('value', (snapshot) => {
         const startTime = snapshot.val();
         const fifteenMinutesLater = startTime + (15 * 60 * 1000);
+
+        // Mettre à jour le timer toutes les secondes
         const interval = setInterval(() => {
           const currentTime = new Date().getTime();
           const remainingTime = fifteenMinutesLater - currentTime;
+
           if (remainingTime > 0) {
             const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
             document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
           } else {
             clearInterval(interval);
-            document.getElementById('timer').innerText = '15:00';
+            document.getElementById('timer').innerText = '15:00'; // Réinitialiser le timer à 15:00
+            // Cacher le champ avec le timer
             document.getElementById('timerContainer').style.display = 'none';
           }
         }, 1000);
