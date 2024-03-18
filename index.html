@@ -11,7 +11,7 @@
   </style>
 </head>
 <body>
-  <h1>Breakbot \o/</h1>
+  <h1>Breakolage bot\o/</h1>
 
   <!-- Boutons des agents -->
   <div id="buttons">
@@ -28,15 +28,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"></script>
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
-    import { getDatabase, ref } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
-
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
+  <script>
+    // Initialize Firebase
+    var firebaseConfig = {
     apiKey: "AIzaSyCQSW4Vps6R7a3OJYJj9YLBKSeNsq5OOxM",
     authDomain: "anantesilpleut.firebaseapp.com",
     projectId: "anantesilpleut",
@@ -45,11 +39,8 @@
     appId: "1:1044746527682:web:679f95c8528e0f1590ec5b",
     measurementId: "G-X4KXT9KTDS"
     };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const database = getDatabase();
+    firebase.initializeApp(firebaseConfig);
+    var database = firebase.database();
 
     // Fonction pour démarrer le timer pour un agent spécifique
     function startTimer(agentName) {
@@ -57,7 +48,7 @@
       document.getElementById('timerContainer').style.display = 'block';
 
       // Récupérer le temps de début de pause depuis la base de données Firebase
-      ref(database, 'timer/start_time').get().then((snapshot) => {
+      database.ref('timer/start_time').get().then((snapshot) => {
         const startTime = snapshot.val();
         const fifteenMinutesLater = startTime + (15 * 60 * 1000);
 
