@@ -1,23 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer en temps réel</title>
+  <style>
+    .timer-container {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Breakolage</h1>
 
-<!doctype html><html lang="en"><head><link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin><link rel="preconnect" href="https://ajax.googleapis.com/" crossorigin><script>window._STORAGE_ORGIN = 'https://storage.googleapis.com/chronograph-assets/80d49870';
-        window._CHRONO_VERSION = '80d49870';</script><script async src="https://www.googletagmanager.com/gtag/js?id=UA-50928456-1"></script><script>window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+  <!-- Boutons des agents -->
+  <div id="buttons">
+    <button onclick="startTimer('Agent 1')">Agent 1</button>
+    <button onclick="startTimer('Agent 2')">Agent 2</button>
+    <!-- Ajoute d'autres boutons pour d'autres agents si nécessaire -->
+  </div>
 
-    gtag('config', 'UA-50928456-1');</script><meta charset="UTF-8"/><title>Chronograph - Stopwatch and Timer: cPa2C5HQ</title><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=5"><link rel="stylesheet" href="https://storage.googleapis.com/chronograph-assets/80d49870/styles.css"><link rel="manifest" href="/manifest.json"/><link rel="icon" type="image/png" sizes="192x192" href="https://storage.googleapis.com/chronograph-assets/80d49870/icons/icon_192x192.png"><meta name="description" content="Share live stopwatches and timers online"/><meta name="keywords" content="Stopwatch, timer, shared stopwatch, shared timer, countdown, synchronized stopwatch, synchronized timer"><meta name="theme-color" content="#999"/><style>body:before {
-            background: #000000 url('https://storage.googleapis.com/chronograph-assets/80d49870/img/compressed-slider/4-blur.jpg') no-repeat center center fixed;
-            background-size: cover; 
-        }</style><script>WebFontConfig = {
-            google: {
-                families: ['Lato:300,400,500', 'Raleway:300']
-            }
-        };
-        (function(d) {
-            var wf = d.createElement('script'), s = d.scripts[0];
-            wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-            wf.async = true;
-            s.parentNode.insertBefore(wf, s);
-        })(document);</script><meta name="theme-color" content="#262626" /><link rel="manifest" href="auto/manifest.json" /></head><body><div id="bottom-layer"></div><div id="container"><header><h1 class="title">chronograph</h1></header><h2 id="subtitle"><span class="blue">cloud-synchronized</span> <span class="inline-block">stopwatch &amp; timer</span></h2><div id="root"></div><div class="advertisement-bottom" aria-hidden="true"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6496192693280897" data-ad-slot="5017564261" data-ad-format="auto"></ins></div><audio id="timerSound" src="/sound/bell.mp3" preload="auto"></audio><footer><span style="display: none">80d49870 go1.22.0</span><div class="copy">&copy;2024 Chronograph.io<br/><a href="https://forms.gle/aPLJBEQ5UwBFpBB78" style="font-size: small">Give Feedback</a></div><span id="offset" class="stats"></span><span id="precision" class="stats"></span><br/></footer></div><script async src="https://storage.googleapis.com/chronograph-assets/80d49870/bundle.js"></script><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-        </body>
+  <!-- Champ avec le timer -->
+  <div class="timer-container" id="timerContainer">
+    <div id="timer"></div>
+  </div>
+
+  <!-- Inclusion des scripts Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"></script>
+
+  <script>
+    // Configuration et initialisation de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQSW4Vps6R7a3OJYJj9YLBKSeNsq5OOxM",
+      authDomain: "anantesilpleut.firebaseapp.com",
+      databaseURL: "https://anantesilpleut-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "anantesilpleut",
+      storageBucket: "anantesilpleut.appspot.com",
+      messagingSenderId: "1044746527682",
+      appId: "1:1044746527682:web:679f95c8528e0f1590ec5b",
+      measurementId: "G-X4KXT9KTDS"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Fonction pour démarrer le timer pour un agent spécifique
+    function startTimer(agentName) {
+      // Afficher le champ avec le timer
+      document.getElementById('timerContainer').style.display = 'block';
+
+      // Référence au noeud du timer
+      const timerRef = firebase.database().ref('timer/start_time');
+
+      // Récupérer le temps de début de pause depuis la base de données Firebase
+      timerRef.once('value', (snapshot) => {
+        const startTime = snapshot.val();
+        const fifteenMinutesLater = startTime + (15 * 60 * 1000);
+
+        // Mettre à jour le timer toutes les secondes
+        const interval = setInterval(() => {
+          const currentTime = new Date().getTime();
+          const remainingTime = fifteenMinutesLater - currentTime;
+
+          if (remainingTime > 0) {
+            const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+            document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+          } else {
+            clearInterval(interval);
+            document.getElementById('timer').innerText = '15:00'; // Réinitialiser le timer à 15:00
+            // Cacher le champ avec le timer
+            document.getElementById('timerContainer').style.display = 'none';
+          }
+        }, 1000);
+      });
+    }
+  </script>
+</body>
 </html>
