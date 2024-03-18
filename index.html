@@ -25,30 +25,7 @@
     <div id="timer"></div>
   </div>
 
-  <!-- Inclusion des scripts Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js"></script>
-
-  <script>
-    // Configuration Firebase
-    const firebaseConfig = {
-    apiKey: "AIzaSyCQSW4Vps6R7a3OJYJj9YLBKSeNsq5OOxM",
-    authDomain: "anantesilpleut.firebaseapp.com",
-    databaseURL: "https://anantesilpleut-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "anantesilpleut",
-    storageBucket: "anantesilpleut.appspot.com",
-    messagingSenderId: "1044746527682",
-    appId: "1:1044746527682:web:679f95c8528e0f1590ec5b",
-    measurementId: "G-X4KXT9KTDS"
-    };
-
-    // Initialisation de Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Référence à la base de données Firebase
-    const database = firebase.database();
-
+ 
     // Fonction pour démarrer le timer pour un agent spécifique
     function startTimer(agentName) {
       // Afficher le champ avec le timer
