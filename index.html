@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr-fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breakbot</title>
+<style>
+  .board {
+    display: flex;
+  }
+  .column {
+    flex: 1;
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  .card {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
 
+<div class="board">
+  <div class="column" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <h3>À faire</h3>
+    <div class="card" draggable="true" id="task1" ondragstart="drag(event)">Tâche 1</div>
+    <div class="card" draggable="true" id="task2" ondragstart="drag(event)">Tâche 2</div>
+  </div>
+  <div class="column" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <h3>En cours</h3>
+    <div class="card" draggable="true" id="task3" ondragstart="drag(event)">Tâche 3</div>
+  </div>
+  <div class="column" id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <h3>Terminé</h3>
+    <div class="card" draggable="true" id="task4" ondragstart="drag(event)">Tâche 4</div>
+    <div class="card" draggable="true" id="task5" ondragstart="drag(event)">Tâche 5</div>
+  </div>
+</div>
+
+<script>
+  // Function to handle card drag
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+  }
+
+  // Function to handle column drop
+  function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    ev.target.appendChild(document.getElementById(data));
+
+    // Update data in localStorage
+    updateData(ev.target.id, data);
+  }
+
+  // Function to allow drop
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  // Function to update data in localStorage
+  function updateData(columnId, cardId) {
+    const data = JSON.parse(localStorage.getItem('kanbanData')) || {};
+    data[columnId] = data[columnId] || [];
+    data[columnId].push(cardId);
+    localStorage.setItem('kanbanData', JSON.stringify(data));
+  }
+
+  // Function to initialize data from localStorage
+  function initializeData() {
+    const data = JSON.parse(localStorage.getItem('kanbanData')) || {};
+    Object.keys(data).forEach(columnId => {
+      const column = document.getElementById(columnId);
+      if (column) {
+        data[columnId].forEach(cardId => {
+          const card = document.getElementById(cardId);
+          if (card) {
+            column.appendChild(card);
+          }
+        });
+      }
+    });
+  }
+
+  // Initialize data from localStorage
+  initializeData();
+</script>
+
+</body>
+</html>
